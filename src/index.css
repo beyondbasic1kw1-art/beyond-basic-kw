@@ -2,19 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* -------------------------------------------------------------
+   BEYOND BASIC Design System
+   Fonts, brand colors, gradients, shadows, transitions
+-------------------------------------------------------------- */
 
+/* === Custom Brand Fonts === */
+@font-face {
+  font-family: "Mollies";
+  src: url("/src/fonts/MOLLIES Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Iwan Zaza";
+  src: url("/src/fonts/IwanZaza-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* -------------------------------------------------------------
+   Base Color Variables (from brand palette)
+   Deep Charcoal, Medium Gray, Warm Taupe, Warm Off-White
+-------------------------------------------------------------- */
 @layer base {
   :root {
-    /* Brand Colors - BEYOND BASIC */
-    --charcoal: 30 7% 13%;
-    --gray: 0 0% 25%;
-    --taupe: 38 18% 47%;
-    --off-white: 30 33% 97%;
-    
-    /* Design System */
+    /* Brand Colors */
+    --charcoal: 30 7% 13%;      /* #221F1D */
+    --gray: 0 0% 25%;           /* #404040 */
+    --taupe: 38 18% 47%;        /* #8F8163 */
+    --off-white: 30 33% 97%;    /* #F9F5F2 */
+
+    /* Design Tokens */
     --background: 30 33% 97%;
     --foreground: 30 7% 13%;
 
@@ -44,36 +66,31 @@ All colors MUST be HSL.
     --ring: 30 7% 13%;
 
     --radius: 0.25rem;
-    
+
     /* Luxury Gradients */
-    --gradient-luxury: linear-gradient(135deg, hsl(var(--charcoal)), hsl(var(--gray)));
+    --gradient-luxury: linear-gradient(135deg, hsl(var(--charcoal)), hsl(var(--taupe)));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--off-white)), hsl(0 0% 95%));
-    
+
     /* Elegant Shadows */
     --shadow-soft: 0 2px 20px -5px hsl(var(--charcoal) / 0.1);
     --shadow-medium: 0 4px 30px -8px hsl(var(--charcoal) / 0.15);
-    
+
     /* Smooth Transitions */
     --transition-elegant: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Sidebar (for admin/future sections) */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* Dark Mode */
   .dark {
     --background: 30 7% 13%;
     --foreground: 30 33% 97%;
@@ -105,6 +122,9 @@ All colors MUST be HSL.
   }
 }
 
+/* -------------------------------------------------------------
+   Typography and Global Styles
+-------------------------------------------------------------- */
 @layer base {
   * {
     @apply border-border;
@@ -112,27 +132,45 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
   }
-  
+
+  /* English Headings */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: "Mollies", serif;
+  }
+
+  /* Arabic Headings (auto-applied via lang="ar" or RTL context) */
+  [dir="rtl"] h1,
+  [dir="rtl"] h2,
+  [dir="rtl"] h3,
+  [dir="rtl"] h4,
+  [dir="rtl"] h5,
+  [dir="rtl"] h6 {
+    font-family: "Iwan Zaza", serif;
+  }
+
+  p, span, li, a {
+    font-family: "Inter", sans-serif;
   }
 }
 
+/* -------------------------------------------------------------
+   Utility Classes
+-------------------------------------------------------------- */
 @layer utilities {
   .luxury-gradient {
     background: var(--gradient-luxury);
   }
-  
+
   .elegant-transition {
     transition: var(--transition-elegant);
   }
-  
+
   .smooth-transition {
     transition: var(--transition-smooth);
   }
-  
+
   .text-shadow-soft {
     text-shadow: 0 2px 10px hsl(var(--charcoal) / 0.3);
   }

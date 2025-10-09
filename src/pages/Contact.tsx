@@ -1,13 +1,20 @@
-import Navbar from '@/components/Navbar';
-import Contact from '@/components/Contact';
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Contact from "@/components/Contact";
 
 const ContactPage = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col bg-background text-foreground font-inter">
+      {/* Fixed Navbar */}
       <Navbar />
-      <div className="pt-20">
+
+      {/* Main Content */}
+      <main className="flex-1 pt-28 md:pt-32">
         <Contact />
-      </div>
+      </main>
+
+      {/* Global Footer */}
+      <Footer />
     </div>
   );
 };

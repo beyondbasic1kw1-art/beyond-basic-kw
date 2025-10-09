@@ -1,42 +1,38 @@
+/* -------------------------------------------------------------
+   BEYOND BASIC — App.css Cleanup
+   This file now acts as a minimal wrapper to ensure global spacing
+   and Tailwind integration consistency.
+-------------------------------------------------------------- */
+
+/* Reset default #root styles */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  @apply min-h-screen w-full overflow-x-hidden bg-background text-foreground;
+  margin: 0;
+  padding: 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
+/* Optional utility: Card wrapper (used if needed in components) */
 .card {
-  padding: 2em;
+  @apply bg-white shadow-md rounded-lg p-6 border border-border transition-transform duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1;
 }
 
+/* Optional utility: Text muted */
 .read-the-docs {
-  color: #888;
+  @apply text-muted-foreground text-sm;
+}
+
+/* Optional animation for subtle fade-in elements */
+@keyframes fade-in-smooth {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-smooth {
+  animation: fade-in-smooth 0.6s ease-out forwards;
 }
