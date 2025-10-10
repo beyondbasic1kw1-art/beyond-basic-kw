@@ -49,7 +49,7 @@ const translations = {
     email: "Email",
     phone: "Phone",
     location: "Location",
-    kuwaitCity: "Kuwait City, Kuwait",
+    kuwaitCity: "Kuwait , Hawalli",
     followUs: "Follow Us",
 
     // Footer

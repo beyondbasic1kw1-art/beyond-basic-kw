@@ -8,14 +8,14 @@ const Contact = () => {
     {
       icon: Mail,
       label: t("email"),
-      value: "info@beyondbasic.kw",
-      href: "mailto:info@beyondbasic.kw",
+      value: "beyondbasic.kw@gmail.com",
+      href: "mailto:beyondbasic.kw@gmail.com",
     },
     {
       icon: Phone,
       label: t("phone"),
-      value: "+965 xxxx xxxx",
-      href: "tel:+965xxxxxxxx",
+      value: "+965 558 50881",
+      href: "tel:+96555850881",
     },
     {
       icon: MapPin,

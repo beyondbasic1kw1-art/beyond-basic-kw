@@ -38,7 +38,7 @@ const About = () => {
             <div className="grid grid-cols-2 gap-8 pt-6 border-t border-bbOlive/30">
               <div className="text-center md:text-left">
                 <div className="font-playfair text-3xl sm:text-4xl font-semibold text-bbOlive mb-1">
-                  10+
+                  4+
                 </div>
                 <div className="text-sm sm:text-base text-bbGray tracking-wide">
                   {t("yearsExperience")}
@@ -47,7 +47,7 @@ const About = () => {
 
               <div className="text-center md:text-left">
                 <div className="font-playfair text-3xl sm:text-4xl font-semibold text-bbOlive mb-1">
-                  100+
+                  800+
                 </div>
                 <div className="text-sm sm:text-base text-bbGray tracking-wide">
                   {t("projectsCompleted")}
