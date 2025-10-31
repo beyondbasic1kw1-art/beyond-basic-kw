@@ -1,58 +1,65 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Paintbrush, Building2, Hammer } from "lucide-react";
 
 const Services = () => {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
 
   const services = [
-    {
-      icon: Paintbrush,
-      title: t("interiorDesign"),
-      description: t("interiorDesignDesc"),
-    },
-    {
-      icon: Building2,
-      title: t("architecture"),
-      description: t("architectureDesc"),
-    },
-    {
-      icon: Hammer,
-      title: t("execution"),
-      description: t("executionDesc"),
-    },
+    { id: 1, image: "/images/1.png", ar: "تصميم الواجهات", en: "Interface Design" },
+    { id: 2, image: "/images/2.png", ar: "تصميم خارجي", en: "External Design" },
+    { id: 3, image: "/images/3.png", ar: "تصميم داخلي سكني وتجاري", en: "Residential and Commercial Interior Design" },
+    { id: 4, image: "/images/4.png", ar: "مخططات الأسقف", en: "Ceiling Plans" },
+    { id: 5, image: "/images/5.png", ar: "الواقع الافتراضي (VR)", en: "Virtual Reality (VR)" },
+    { id: 6, image: "/images/6.png", ar: "مخططات الكهرباء", en: "Electricity Plans" },
+    { id: 7, image: "/images/7.png", ar: "مخططات الإنارة", en: "Lighting Diagrams" },
+    { id: 8, image: "/images/8.png", ar: "مخططات توزيع الأثاث", en: "Furniture Layout Plans" },
+    { id: 9, image: "/images/9.png", ar: "رفع القياسات بمخطط معماري", en: "Take Measurements with an Architectural Plan" },
+    { id: 10, image: "/images/10.png", ar: "تصميم البوث أو طاولات الضيافة", en: "Booth Design or Hospitality Tables" },
+    { id: 11, image: "/images/11.png", ar: "فيديوهات بجودة 4K", en: "4K Quality Videos" },
+    { id: 12, image: "/images/12.png", ar: "مخططات تنفيذية تفصيلية", en: "Detailed Implementation Plans" },
+    { id: 13, image: "/images/13.png", ar: "مخططات الحوائط", en: "Wall Plans" },
+    { id: 14, image: "/images/14.png", ar: "مخططات الأرضيات", en: "Floor Plans" },
   ];
 
   return (
-    <section className="bg-white py-16 md:py-24 px-4 sm:px-6 lg:px-8 text-bbDark">
-      <div className="container mx-auto max-w-6xl text-center">
+    <section className="bg-bbSoftGold py-16 md:py-24 px-4 sm:px-6 lg:px-8 text-bbDark">
+      <div className="container mx-auto max-w-7xl text-center">
         {/* Section Title */}
-        <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold mb-12 md:mb-16 animate-fade-in">
-          {t("servicesTitle")}
+        <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold mb-12 md:mb-16 animate-fade-in text-bbDark">
+          {language === "ar" ? "خدماتنا" : "Our Services"}
         </h2>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {services.map((service, index) => (
-            <div
-              key={service.title}
-              className="group flex flex-col items-center text-center p-8 bg-bbSoftGold/50 rounded-2xl hover:bg-bbSoftGold transition-all duration-500 shadow-sm hover:shadow-lg animate-scale-in"
-              style={{ animationDelay: `${index * 0.15}s` }}
+            <article
+              key={service.id}
+              className="relative group overflow-hidden rounded-3xl shadow-md hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-1"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Icon */}
-              <div className="flex items-center justify-center w-16 h-16 mb-6 rounded-full bg-bbOlive/10 group-hover:bg-bbOlive/20 transition-colors duration-300">
-                <service.icon className="h-8 w-8 text-bbOlive group-hover:scale-110 transition-transform duration-300" />
+              {/* Background Image */}
+              <img
+                src={service.image}
+                alt={
+                  language === "ar"
+                    ? `${service.ar} - Beyond Basic`
+                    : `${service.en} - Beyond Basic`
+                }
+                className="object-cover w-full h-[400px] group-hover:scale-110 transition-transform duration-700"
+              />
+
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-bbDark/80 via-bbDark/30 to-transparent transition-all duration-700" />
+
+              {/* Content Overlay */}
+              <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 px-4 text-center transition-all duration-700">
+                <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-mollies font-bold mb-2 leading-snug drop-shadow-lg">
+                  {language === "ar" ? service.ar : service.en}
+                </h3>
+                <p className="text-bbSoftGold text-sm md:text-base font-light">
+                  {language === "ar" ? service.en : service.ar}
+                </p>
               </div>
-
-              {/* Title */}
-              <h3 className="font-playfair text-xl sm:text-2xl font-semibold mb-3">
-                {service.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-sm sm:text-base text-bbGray leading-relaxed max-w-xs">
-                {service.description}
-              </p>
-            </div>
+            </article>
           ))}
         </div>
       </div>
