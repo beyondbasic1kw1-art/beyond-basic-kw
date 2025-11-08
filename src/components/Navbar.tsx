@@ -3,7 +3,8 @@ import { Languages, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo.png"; // ✅ Import logo
+import logoEN from "@/assets/logoen.png";
+import logoAR from "@/assets/logoar.png";
 
 const Navbar = () => {
   const { language, toggleLanguage, t } = useLanguage();
@@ -12,21 +13,29 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
 
+  // ✅ Automatically pick correct logo
+  const logo = language === "ar" ? logoAR : logoEN;
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-bbSoftGold/80 backdrop-blur-md border-b border-bbOlive">
       <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
-        
         {/* ✅ Logo Section */}
         <Link to="/" onClick={closeMenu} aria-label="Beyond Basic Home">
           <img
             src={logo}
             alt="Beyond Basic Logo"
-            className="w-28 md:w-32 h-auto hover:opacity-90 transition-opacity"
+            className={`w-28 md:w-32 h-auto hover:opacity-90 transition-all duration-500 ${
+              language === "ar" ? "scale-110" : ""
+            }`}
           />
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8 text-bbDark">
+        <div
+          className={`hidden md:flex items-center gap-8 text-bbDark ${
+            language === "ar" ? "flex-row-reverse" : ""
+          }`}
+        >
           <Link to="/" className="text-sm font-medium hover:text-bbOlive transition-colors">
             {t("home")}
           </Link>
@@ -71,20 +80,44 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-bbSoftGold/95 backdrop-blur-md border-t border-bbOlive animate-fade-in">
-          <div className="flex flex-col items-start gap-4 px-6 py-4 text-bbDark">
-            <Link to="/" onClick={closeMenu} className="text-base font-medium hover:text-bbOlive transition-colors">
+          <div
+            className={`flex flex-col ${
+              language === "ar" ? "items-end" : "items-start"
+            } gap-4 px-6 py-4 text-bbDark`}
+          >
+            <Link
+              to="/"
+              onClick={closeMenu}
+              className="text-base font-medium hover:text-bbOlive transition-colors"
+            >
               {t("home")}
             </Link>
-            <Link to="/portfolio" onClick={closeMenu} className="text-base font-medium hover:text-bbOlive transition-colors">
+            <Link
+              to="/portfolio"
+              onClick={closeMenu}
+              className="text-base font-medium hover:text-bbOlive transition-colors"
+            >
               {t("portfolio")}
             </Link>
-            <Link to="/about" onClick={closeMenu} className="text-base font-medium hover:text-bbOlive transition-colors">
+            <Link
+              to="/about"
+              onClick={closeMenu}
+              className="text-base font-medium hover:text-bbOlive transition-colors"
+            >
               {t("about")}
             </Link>
-            <Link to="/services" onClick={closeMenu} className="text-base font-medium hover:text-bbOlive transition-colors">
+            <Link
+              to="/services"
+              onClick={closeMenu}
+              className="text-base font-medium hover:text-bbOlive transition-colors"
+            >
               {t("services")}
             </Link>
-            <Link to="/contact" onClick={closeMenu} className="text-base font-medium hover:text-bbOlive transition-colors">
+            <Link
+              to="/contact"
+              onClick={closeMenu}
+              className="text-base font-medium hover:text-bbOlive transition-colors"
+            >
               {t("contact")}
             </Link>
           </div>
