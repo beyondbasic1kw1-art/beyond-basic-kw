@@ -8,6 +8,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabaseClient";
+import { Helmet } from "react-helmet-async";
 
 const Portfolio = () => {
   const { t } = useLanguage();
@@ -15,7 +16,7 @@ const Portfolio = () => {
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(-1);
 
-  // ✅ Fetch images from Supabase Storage
+  // ✅ Fetch images from Supabase
   const fetchImages = async () => {
     setLoading(true);
     try {
@@ -29,7 +30,6 @@ const Portfolio = () => {
       if (error) {
         console.error("Error loading images:", error.message);
         setImages([]);
-        setLoading(false);
         return;
       }
 
@@ -42,7 +42,7 @@ const Portfolio = () => {
           )
           .filter(Boolean) || [];
 
-      // ✅ Add cache-busting parameter
+      // ✅ Prevent browser caching
       const cacheBustedUrls = urls.map((url) => `${url}?t=${Date.now()}`);
       setImages(cacheBustedUrls);
     } catch (err) {
@@ -52,10 +52,9 @@ const Portfolio = () => {
     }
   };
 
-  // ✅ Realtime updates: refresh when portfolio table changes
+  // ✅ Real-time update when portfolio table changes
   useEffect(() => {
     fetchImages();
-
     const channel = supabase
       .channel("portfolio-updates")
       .on(
@@ -75,6 +74,51 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-inter">
+      {/* ✅ SEO Helmet */}
+      <Helmet>
+        <title>Portfolio — Beyond Basic KW | Luxury Interior Design Kuwait</title>
+        <meta
+          name="description"
+          content="Explore Beyond Basic KW’s portfolio of luxury interior design and architecture projects across Kuwait — where creativity meets sophistication."
+        />
+        <meta
+          name="keywords"
+          content="Beyond Basic KW portfolio, interior design Kuwait, architecture Kuwait, luxury design Kuwait, commercial interiors, residential interiors"
+        />
+        <meta name="author" content="Beyond Basic KW" />
+
+        {/* ✅ Open Graph */}
+        <meta property="og:title" content="Beyond Basic KW | Portfolio" />
+        <meta
+          property="og:description"
+          content="Discover luxury interior and architectural design projects by Beyond Basic KW, Kuwait’s leading design studio."
+        />
+        <meta
+          property="og:image"
+          content="https://beyondbasickw.com/images/og-image.jpg"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://beyondbasickw.com/portfolio" />
+
+        {/* ✅ Schema JSON-LD */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ImageGallery",
+            name: "Beyond Basic KW Portfolio",
+            description:
+              "Luxury interior and architectural design portfolio from Beyond Basic KW in Kuwait.",
+            url: "https://beyondbasickw.com/portfolio",
+            creator: {
+              "@type": "Organization",
+              name: "Beyond Basic KW",
+              url: "https://beyondbasickw.com",
+            },
+            image: images.map((src) => src),
+          })}
+        </script>
+      </Helmet>
+
       <Navbar />
 
       <main className="flex-1 pt-28 md:pt-32 pb-24 px-6">
@@ -83,7 +127,7 @@ const Portfolio = () => {
             {t("portfolio")}
           </h1>
           <p className="text-center text-muted-foreground text-lg mb-16">
-            {t("portfolioSubtitle") ||
+            {t("Explore our collection of luxury interior design projects") ||
               "Explore our collection of luxury interior design projects"}
           </p>
 
@@ -126,7 +170,7 @@ const Portfolio = () => {
                   >
                     <img
                       src={src}
-                      alt={`Project ${i + 1}`}
+                      alt={`Beyond Basic KW project ${i + 1} — luxury interior design Kuwait`}
                       className="
                         w-full 
                         h-[350px] 

@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const Services = () => {
   const { language } = useLanguage();
@@ -25,6 +26,62 @@ const Services = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-inter">
+      {/* ✅ SEO Meta Tags */}
+      <Helmet>
+        <title>Our Services — Beyond Basic KW | Interior Design Kuwait</title>
+        <meta
+          name="description"
+          content="Explore Beyond Basic KW’s interior design and architecture services — from residential interiors to detailed ceiling and lighting plans in Kuwait."
+        />
+        <meta
+          name="keywords"
+          content="Beyond Basic KW, interior design Kuwait, architecture Kuwait, ceiling plans, lighting design, luxury interiors, VR design, bespoke furniture"
+        />
+        <meta name="author" content="Beyond Basic KW" />
+        <link rel="canonical" href="https://beyondbasickw.com/services" />
+
+        {/* ✅ Open Graph */}
+        <meta property="og:title" content="Beyond Basic KW | Our Services" />
+        <meta
+          property="og:description"
+          content="Discover our range of interior design and architecture services in Kuwait — crafted by Beyond Basic KW."
+        />
+        <meta property="og:image" content="https://beyondbasickw.com/images/og-image.jpg" />
+        <meta property="og:url" content="https://beyondbasickw.com/services" />
+        <meta property="og:type" content="website" />
+
+        {/* ✅ Schema JSON-LD for Services */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Interior Design & Architecture Services",
+            provider: {
+              "@type": "Organization",
+              name: "Beyond Basic KW",
+              url: "https://beyondbasickw.com",
+            },
+            areaServed: {
+              "@type": "Place",
+              name: "Kuwait",
+            },
+            hasOfferCatalog: {
+              "@type": "OfferCatalog",
+              name: "Beyond Basic KW Services",
+              itemListElement: services.map((service) => ({
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: service.en,
+                  description: `${service.en} service offered by Beyond Basic KW in Kuwait.`,
+                  image: `https://beyondbasickw.com${service.image}`,
+                },
+              })),
+            },
+          })}
+        </script>
+      </Helmet>
+
       {/* Header */}
       <Navbar />
 
@@ -33,9 +90,9 @@ const Services = () => {
         <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 text-bbDark">
           <div className="container mx-auto max-w-7xl text-center">
             {/* Section Title */}
-            <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold mb-12 md:mb-16 animate-fade-in">
+            <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold mb-12 md:mb-16 animate-fade-in">
               {language === "ar" ? "خدماتنا" : "Our Services"}
-            </h2>
+            </h1>
 
             {/* Services Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
@@ -45,11 +102,13 @@ const Services = () => {
                   to={`/services/${service.en.toLowerCase().replace(/\s+/g, "-")}`}
                   className="relative group overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-700"
                   style={{ animationDelay: `${index * 0.1}s` }}
+                  aria-label={`${service.en} - Beyond Basic KW`}
                 >
                   <img
                     src={service.image}
-                    alt={service.en}
+                    alt={`${service.en} - Beyond Basic KW`}
                     className="object-cover w-full h-[400px] group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
                   />
 
                   {/* Overlay */}

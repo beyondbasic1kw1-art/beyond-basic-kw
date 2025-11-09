@@ -12,3 +12,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://beyondbasickw.com/sitemap.xml
+
+Sitemap: https://beyondbasickw.com/sitemap.xml
