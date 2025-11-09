@@ -1,0 +1,6 @@
+# Force HTTPS and non-www version
+http://* https://beyondbasickw.com/:splat 301!
+https://www.beyondbasickw.com/* https://beyondbasickw.com/:splat 301!
+
+# Redirect all other routes to index.html for SPA routing
+/*    /index.html   200
