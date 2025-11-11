@@ -1,57 +1,64 @@
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/lib/supabaseClient";
+import { Helmet } from "react-helmet-async";
+
+interface AboutSection {
+  id: number;
+  section_key: string;
+  en_heading: string;
+  en_text: string;
+  ar_heading: string;
+  ar_text: string;
+}
 
 const About = () => {
   const { language } = useLanguage();
+  const [sections, setSections] = useState<AboutSection[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const content = {
-    en: {
-      title: "About Beyond Basic",
-      sections: [
-        {
-          heading: "Crafting Timeless Luxury Spaces",
-          text: `Beyond Basic is a luxury interior design and architecture firm specializing in delivering comprehensive solutions for both interior and exterior spaces. Registered and licensed by the Ministry of Commerce, the company operates with a commitment to regulatory compliance, innovation, and exceptional craftsmanship. Each project reflects the highest standards of design quality, precision, and creativity, blending modern aesthetics with timeless sophistication.`,
-        },
-        {
-          heading: "Design Philosophy",
-          text: `Beyond Basic approaches every space with a deep understanding of functionality, style, and human experience. The company designs a wide range of environments—residential, commercial, and retail spaces—through intelligent spatial planning, the selection of premium materials, and meticulous coordination of color, texture, and lighting. Its design philosophy balances visual appeal with functional elegance, ensuring every project serves both beauty and purpose.`,
-        },
-        {
-          heading: "Comprehensive Services",
-          text: `Beyond Basic provides complete design and implementation services—from concept creation and 3D visualization to on-site supervision and project execution. Its integrated process guarantees precision in every detail, meeting client expectations while adhering to strict timelines and budget frameworks. Whether designing private residences, corporate offices, or public institutions, Beyond Basic transforms creative visions into tangible realities that elevate the way people live and work.`,
-        },
-        {
-          heading: "Expert Team & Vision",
-          text: `The company’s success is driven by a talented team of engineers, architects, and designers who combine global innovation with local cultural insight. By integrating the latest design technologies and international trends, Beyond Basic continues to deliver spaces that inspire and endure. The firm maintains a strong focus on client satisfaction, transparency, and long-term relationships, positioning itself as one of Kuwait’s most trusted names in luxury interior design and architecture.`,
-        },
-      ],
-    },
+  // ✅ Fetch About content from Supabase
+  useEffect(() => {
+    const fetchContent = async () => {
+      const { data, error } = await supabase
+        .from("about_content")
+        .select("*")
+        .order("id", { ascending: true });
 
-    ar: {
-      title: "من نحن",
-      sections: [
-        {
-          heading: "تصميم مساحات فاخرة خالدة",
-          text: `بيوند بيسك هي شركة متخصصة في التصميم الداخلي والمعماري الفاخر، تقدم حلولًا شاملة للمساحات الداخلية والخارجية. الشركة مسجلة ومرخصة من وزارة التجارة، وتعمل وفق أعلى معايير الجودة والابتكار والامتثال التنظيمي. كل مشروع يعكس التزام بيوند بيسك بالدقة والإبداع والجمال الرفيع.`,
-        },
-        {
-          heading: "فلسفة التصميم",
-          text: `تعتمد بيوند بيسك في أعمالها على فهم عميق لوظائف المساحة وأسلوب الحياة وتجربة المستخدم. تقوم بتصميم مجموعة واسعة من المشاريع السكنية والتجارية من خلال تخطيط ذكي للمساحات، واختيار المواد الراقية، وتنسيق الألوان والإضاءة بشكل متقن لتحقيق توازن بين الجمال والوظيفة.`,
-        },
-        {
-          heading: "الخدمات المتكاملة",
-          text: `تقدم بيوند بيسك خدمات تصميم وتنفيذ متكاملة، بدءًا من وضع المفهوم والرؤية ثلاثية الأبعاد وحتى الإشراف الميداني الكامل على التنفيذ. وتضمن الدقة في كل التفاصيل والالتزام بالمواعيد والميزانية، مع تحويل الرؤى الإبداعية إلى واقع ملموس يضيف قيمة وجمالًا إلى كل مشروع.`,
-        },
-        {
-          heading: "فريق الخبراء والرؤية",
-          text: `تعتمد الشركة على فريق من المهندسين والمصممين ذوي الخبرة الذين يجمعون بين الابتكار العالمي والفهم الثقافي المحلي. من خلال دمج أحدث التقنيات والاتجاهات العالمية، تقدم بيوند بيسك تصاميم ملهمة تدوم طويلاً مع التركيز على رضا العملاء والشفافية في التواصل، مما يجعلها من أبرز شركات التصميم الداخلي والمعماري الفاخر في الكويت.`,
-        },
-      ],
-    },
-  };
+      if (error) {
+        console.error("❌ Error fetching About content:", error.message);
+      } else {
+        setSections(data || []);
+      }
 
-  const data = language === "ar" ? content.ar : content.en;
+      setLoading(false);
+    };
+
+    fetchContent();
+  }, []);
+
+  const pageTitle =
+    language === "ar"
+      ? "من نحن — بيوند بيسك | التصميم الداخلي والمعماري في الكويت"
+      : "About Beyond Basic KW | Interior Design Kuwait";
+
+  const pageDescription =
+    language === "ar"
+      ? "اكتشف بيوند بيسك — شركة التصميم الداخلي والمعماري الفاخر في الكويت. نقدم حلولاً شاملة للمساحات السكنية والتجارية بأعلى مستويات الجودة والإبداع."
+      : "Discover Beyond Basic KW — Kuwait’s premier luxury interior design and architecture studio, crafting timeless spaces with precision and innovation.";
+
+  const canonicalUrl = "https://beyondbasickw.com/about";
+  const ogImage = "https://beyondbasickw.com/images/og-about.jpg";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-bbGray font-inter">
+        Loading About Page...
+      </div>
+    );
+  }
 
   return (
     <div
@@ -59,6 +66,52 @@ const About = () => {
         language === "ar" ? "direction-rtl text-right" : ""
       }`}
     >
+      {/* ✅ SEO Helmet */}
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta
+          name="keywords"
+          content="Beyond Basic KW, interior design Kuwait, luxury architecture Kuwait, design studio Kuwait, home interiors, modern design Kuwait"
+        />
+        <meta name="author" content="Beyond Basic KW" />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* ✅ Open Graph */}
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Beyond Basic KW" />
+
+        {/* ✅ Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={ogImage} />
+
+        {/* ✅ Schema.org structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Beyond Basic KW",
+            url: "https://beyondbasickw.com",
+            logo: "https://beyondbasickw.com/images/logo.png",
+            sameAs: [
+              "https://www.instagram.com/beyondbasickw",
+              "https://www.facebook.com/beyondbasickw",
+            ],
+            description: pageDescription,
+            address: {
+              "@type": "PostalAddress",
+              addressCountry: "Kuwait",
+            },
+          })}
+        </script>
+      </Helmet>
+
       {/* Navbar */}
       <Navbar />
 
@@ -67,30 +120,30 @@ const About = () => {
         <div className="container mx-auto max-w-5xl">
           {/* Page Title */}
           <h1 className="font-playfair text-4xl md:text-6xl font-bold text-center mb-12 animate-fade-in">
-            {data.title}
+            {language === "ar" ? "من نحن" : "About Beyond Basic"}
           </h1>
 
           {/* Content Sections */}
           <div className="space-y-16">
-            {data.sections.map((section, index) => (
+            {sections.map((section, index) => (
               <div
-                key={index}
+                key={section.id}
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
                 <h2 className="font-playfair text-2xl md:text-3xl mb-4 text-bbOlive">
-                  {section.heading}
+                  {language === "ar" ? section.ar_heading : section.en_heading}
                 </h2>
-                <p className="text-bbGray text-lg leading-relaxed">
-                  {section.text}
+                <p className="text-bbGray text-lg leading-relaxed whitespace-pre-line">
+                  {language === "ar" ? section.ar_text : section.en_text}
                 </p>
               </div>
             ))}
           </div>
         </div>
       </main>
-
-      {/* Footer */}
+{/* 
+      Footer */}
       <Footer />
     </div>
   );

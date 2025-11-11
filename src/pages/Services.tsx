@@ -1,28 +1,46 @@
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { supabase } from "@/lib/supabaseClient";
+
+interface Service {
+  id: number;
+  slug: string;
+  en_title: string;
+  ar_title: string;
+  en_description: string;
+  ar_description: string;
+  image_url: string;
+}
 
 const Services = () => {
   const { language } = useLanguage();
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const services = [
-    { id: 1, image: "/images/1.png", ar: "تصميم الواجهة", en: "Interface Design" },
-    { id: 2, image: "/images/2.png", ar: "تصميم خارجي", en: "External Design" },
-    { id: 3, image: "/images/3.png", ar: "تصميم داخلي سكني وتجاري", en: "Residential and Commercial Interior Design" },
-    { id: 4, image: "/images/4.png", ar: "مخططات الأسقف", en: "Ceiling Plans" },
-    { id: 5, image: "/images/5.png", ar: "الواقع الافتراضي (VR)", en: "Virtual Reality (VR)" },
-    { id: 6, image: "/images/6.png", ar: "مخططات الكهرباء", en: "Electricity Plans" },
-    { id: 7, image: "/images/7.png", ar: "مخططات الإضاءة", en: "Lighting Diagrams" },
-    { id: 8, image: "/images/8.png", ar: "مخططات توزيع الأثاث", en: "Furniture Layout Plans" },
-    { id: 9, image: "/images/9.png", ar: "رفع القياسات بالمخطط المعماري", en: "Take Measurements with an Architectural Plan" },
-    { id: 10, image: "/images/10.png", ar: "تصميم الأكشاك والطاولات", en: "Booth Design or Hospitality Tables" },
-    { id: 11, image: "/images/11.png", ar: "فيديوهات بجودة 4K", en: "4K Quality Videos" },
-    { id: 12, image: "/images/12.png", ar: "مخططات تنفيذية تفصيلية", en: "Detailed Implementation Plans" },
-    { id: 13, image: "/images/13.png", ar: "مخططات الحوائط", en: "Wall Plans" },
-    { id: 14, image: "/images/14.png", ar: "مخططات الأرضيات", en: "Floor Plans" },
-  ];
+  // ✅ Fetch services dynamically from Supabase
+  useEffect(() => {
+    const fetchServices = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("services")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching services:", error.message);
+      } else {
+        setServices(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchServices();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-inter">
@@ -46,40 +64,48 @@ const Services = () => {
           property="og:description"
           content="Discover our range of interior design and architecture services in Kuwait — crafted by Beyond Basic KW."
         />
-        <meta property="og:image" content="https://beyondbasickw.com/images/og-image.jpg" />
-        <meta property="og:url" content="https://beyondbasickw.com/services" />
+        <meta
+          property="og:image"
+          content="https://beyondbasickw.com/images/og-image.jpg"
+        />
+        <meta
+          property="og:url"
+          content="https://beyondbasickw.com/services"
+        />
         <meta property="og:type" content="website" />
 
         {/* ✅ Schema JSON-LD for Services */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: "Interior Design & Architecture Services",
-            provider: {
-              "@type": "Organization",
-              name: "Beyond Basic KW",
-              url: "https://beyondbasickw.com",
-            },
-            areaServed: {
-              "@type": "Place",
-              name: "Kuwait",
-            },
-            hasOfferCatalog: {
-              "@type": "OfferCatalog",
-              name: "Beyond Basic KW Services",
-              itemListElement: services.map((service) => ({
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Service",
-                  name: service.en,
-                  description: `${service.en} service offered by Beyond Basic KW in Kuwait.`,
-                  image: `https://beyondbasickw.com${service.image}`,
-                },
-              })),
-            },
-          })}
-        </script>
+        {services.length > 0 && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Service",
+              name: "Interior Design & Architecture Services",
+              provider: {
+                "@type": "Organization",
+                name: "Beyond Basic KW",
+                url: "https://beyondbasickw.com",
+              },
+              areaServed: {
+                "@type": "Place",
+                name: "Kuwait",
+              },
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "Beyond Basic KW Services",
+                itemListElement: services.map((service) => ({
+                  "@type": "Offer",
+                  itemOffered: {
+                    "@type": "Service",
+                    name: service.en_title,
+                    description: service.en_description,
+                    image: service.image_url,
+                  },
+                })),
+              },
+            })}
+          </script>
+        )}
       </Helmet>
 
       {/* Header */}
@@ -94,35 +120,45 @@ const Services = () => {
               {language === "ar" ? "خدماتنا" : "Our Services"}
             </h1>
 
-            {/* Services Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-              {services.map((service, index) => (
-                <Link
-                  key={service.id}
-                  to={`/services/${service.en.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="relative group overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-700"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                  aria-label={`${service.en} - Beyond Basic KW`}
-                >
-                  <img
-                    src={service.image}
-                    alt={`${service.en} - Beyond Basic KW`}
-                    className="object-cover w-full h-[400px] group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
+            {/* Loading or Empty States */}
+            {loading ? (
+              <p className="text-bbGray text-center">Loading services...</p>
+            ) : services.length === 0 ? (
+              <p className="text-bbGray text-center">No services found.</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                {services.map((service, index) => (
+                  <Link
+                    key={service.id}
+                    to={`/services/${service.slug}`}
+                    className="relative group overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-700"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    aria-label={`${service.en_title} - Beyond Basic KW`}
+                  >
+                    <img
+                      src={service.image_url}
+                      alt={`${service.en_title} - Beyond Basic KW`}
+                      className="object-cover w-full h-[400px] group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition-colors duration-700 flex flex-col items-center justify-center text-center px-4">
-                    <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-playfair leading-snug">
-                      {language === "ar" ? service.ar : service.en}
-                    </h3>
-                    <p className="text-bbSoftGold text-sm md:text-base">
-                      {language === "ar" ? service.en : service.ar}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition-colors duration-700 flex flex-col items-center justify-center text-center px-4">
+                      <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-playfair leading-snug">
+                        {language === "ar"
+                          ? service.ar_title
+                          : service.en_title}
+                      </h3>
+                      <p className="text-bbSoftGold text-sm md:text-base">
+                        {language === "ar"
+                          ? service.en_title
+                          : service.ar_title}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>

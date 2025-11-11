@@ -1,43 +1,119 @@
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+
+interface ContactData {
+  id: number;
+  en_title: string;
+  ar_title: string;
+  en_description: string;
+  ar_description: string;
+  phone: string;
+  email: string;
+  address_en: string;
+  address_ar: string;
+  map_embed?: string | null;
+}
 
 const Contact = () => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const [data, setData] = useState<ContactData | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // ✅ Fetch contact data from Supabase
+  useEffect(() => {
+    const fetchContact = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("contact_content")
+        .select("*")
+        .order("id", { ascending: false }) // ✅ Always get the latest record
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error("❌ Error loading contact content:", error.message);
+      } else if (data) {
+        setData(data);
+      }
+      setLoading(false);
+    };
+
+    fetchContact();
+  }, []);
+
+  // 🕓 Loading state
+  if (loading) {
+    return (
+      <section className="bg-bbDark text-bbSoftGold py-24 text-center">
+        <p>Loading contact info...</p>
+      </section>
+    );
+  }
+
+  // ⚠️ No data fallback
+  if (!data) {
+    return (
+      <section className="bg-bbDark text-bbSoftGold py-24 text-center">
+        <p>No contact information available.</p>
+      </section>
+    );
+  }
+
+  // 🌐 Language-based content
+  const title = language === "ar" ? data.ar_title : data.en_title;
+  const description =
+    language === "ar" ? data.ar_description : data.en_description;
+  const address = language === "ar" ? data.address_ar : data.address_en;
+
+  // 📞 Contact info array
   const contactInfo = [
     {
       icon: Mail,
-      label: t("email"),
-      value: "beyondbasic.kw@gmail.com",
-      href: "mailto:beyondbasic.kw@gmail.com",
+      label: t("email") || (language === "ar" ? "البريد الإلكتروني" : "Email"),
+      value: data.email,
+      href: `mailto:${data.email}`,
     },
     {
       icon: Phone,
-      label: t("phone"),
-      value: "+965 558 50881",
-      href: "tel:+96555850881",
+      label: t("phone") || (language === "ar" ? "الهاتف" : "Phone"),
+      value: data.phone,
+      href: `tel:${data.phone}`,
     },
     {
       icon: MapPin,
-      label: t("location"),
-      value: t("kuwaitCity"),
+      label: t("location") || (language === "ar" ? "العنوان" : "Address"),
+      value: address,
       href: "#",
     },
   ];
 
+  // 🧱 Layout
   return (
     <section
       id="contact"
-      className="bg-bbDark text-bbSoftGold py-16 md:py-24 px-4 sm:px-6 lg:px-8"
+      className={`bg-bbDark text-bbSoftGold py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${
+        language === "ar" ? "direction-rtl text-right" : "text-center"
+      }`}
     >
-      <div className="container mx-auto max-w-5xl text-center">
-        {/* Section Title */}
-        <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold mb-12 md:mb-16 animate-fade-in">
-          {t("getInTouch")}
+      <div className="container mx-auto max-w-5xl">
+        {/* 🏷️ Section Title */}
+        <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold mb-6 animate-fade-in text-bbSoftGold">
+          {title}
         </h2>
 
-        {/* Contact Info */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
+        {/* 📝 Description */}
+        <p className="text-bbSoftGold/80 text-lg mb-12 animate-fade-in max-w-3xl mx-auto leading-relaxed">
+          {description}
+        </p>
+
+        {/* 📞 Contact Info */}
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 ${
+            language === "ar" ? "md:text-right" : ""
+          }`}
+        >
           {contactInfo.map((item, index) => (
             <a
               key={item.label}
@@ -59,6 +135,14 @@ const Contact = () => {
             </a>
           ))}
         </div>
+
+        {/* 🗺️ Optional Google Map Embed */}
+        {data.map_embed && (
+          <div
+            className="mt-16 w-full rounded-xl overflow-hidden shadow-lg animate-fade-in"
+            dangerouslySetInnerHTML={{ __html: data.map_embed }}
+          />
+        )}
       </div>
     </section>
   );
